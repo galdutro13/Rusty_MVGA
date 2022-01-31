@@ -18,6 +18,13 @@ macro_rules! EQUAL {
     ($a:expr, $b:expr, f64) => { f64::abs($a - $b) < SMALL };
 }
 
+macro_rules! TERNARY{
+    ($test:expr => $true:expr, $false:expr) => {
+        if($test){ $true }
+        else{ $false }
+    }
+}
+
 #[derive(Copy, Clone)]
 struct Vector {
     x: f64,
@@ -169,14 +176,93 @@ fn create_matrix_with_values(n: i64, m: i64, valores: Vec<f64>) -> Matrix{
 }
 
 
-fn copy_matrix(mat: Matrix) -> Matrix{
+fn copy_matrix(mat: &mut Matrix) -> Matrix{
 
-    let mut copy: Matrix = create_matrix(mat.lin, mat.col);
+    let mut copy: Matrix = create_matrix(mat.lin.clone(), mat.col.clone());
 
     copy.m = mat.m.clone();
 
     return copy;
 }
+
+
+fn create_identity(n: i64) -> Matrix{
+
+    let mut mat: Matrix = create_matrix(n.clone(), n.clone());
+
+    let mut var1: i64 = 0;
+    let mut var2: i64 = 0;
+    for x in 0..(&n * &n - 1){
+
+        if var1 != var2 { mat.m.push(0.) }
+        else { mat.m.push(1.) }
+
+        //prestar atenção nessa parte -> manipulando matriz como um vetor
+        if var1 >= (&n - 1) && var2 >= (&n -1){ break; }
+        else if var2 >= (&n -1) { var2 = 0; var1 = var1 + 1; }
+        else { var1 = var1 + 1; var2 = var2 + 1; }
+
+    }
+
+    return mat;
+}
+
+fn det2x2(mat: &Matrix) -> f64{
+
+    if mat.lin == 2 && mat.col == 2 {
+
+        return (mat.m[0] * mat.m[3]) - (mat.m[1] * mat.m[2]);
+    }
+
+    println!("Invalid matrix size!");
+
+    return 0.0;
+}
+
+fn cofactor3x3(mat: &Matrix, i: i64, j: i64) -> f64{
+    let cof: f64;
+
+    let mut values: Vec<f64> = Vec::with_capacity(4);
+
+    let mut k: i64;
+
+    let mut tmp: Matrix;
+
+    if mat.lin == 3 && mat.col == 3 {
+        k = 0;
+
+        for lin in 0..(&mat.lin -1) {
+            for col in 0..(&mat.col -1) {
+
+                if lin != i && col != j {
+                    let index = (lin * col) as usize;
+                    values.push(mat.m[index]) }
+
+            }
+        }
+
+        tmp = create_matrix_with_values(2, 2, values);
+
+        cof = TERNARY!((i + j) % 2 == 0 => 1., -1.) * det2x2(&tmp);
+
+        return cof;
+    }
+
+    println!("Invalid matrix size!");
+    return 0.;
+}
+
+fn det3x3(mat: &Matrix) -> f64{
+
+    if mat.lin == 3 && mat.col == 3 {
+        return mat.m[0] * cofactor3x3(mat, 0, 0) + mat.m[1] * cofactor3x3(mat, 0, 1)
+        + mat.m[2] * cofactor3x3(mat, 0, 2);
+    }
+
+    println!("Invalid matrix size!");
+    return 0.;
+}
+
 
 
 
