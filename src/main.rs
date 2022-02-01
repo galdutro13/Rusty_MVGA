@@ -72,7 +72,7 @@ fn create_image(w: i64, h: i64, bg_color: i64) -> Image{
     let mut image: Image = Image {
         height: h,
         width: w,
-        matrix: vec![bg_color, &w * &h], //cria um array linear com w * h posições
+        matrix: vec![bg_color; (&w * &h) as usize], //cria um array linear com w * h posições
     };
 
 
@@ -158,7 +158,7 @@ fn create_matrix(n: i64, m: i64) -> Matrix {
 
 
     let mut matrix: Matrix = Matrix{
-        m: vec![0., (&n * &m) as f64],
+        m: vec![0.; (&n * &m) as usize],
         lin: n,
         col: m,
     };
@@ -271,6 +271,7 @@ fn main() {
 
     let mut image: Image = create_image(64, 64, 255);
 
+    let mut matrix: Matrix = create_matrix(4, 4);
 
 
 }
