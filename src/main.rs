@@ -56,6 +56,9 @@ fn create_vector(x: f64, y: f64) -> Vector{
     }
 }
 
+// funcao que converte as coordenadas de um vetor do espaco referente a area de desenho
+// (veja detalhamento nos comentarios da funcao draw_line) para o espaco referente a imagem
+// propriamente dita.
 fn convert(v: &Vector, width: f64, height: f64) -> Vector {
     let n_x: f64 = (v.x.clone() + 1.0) * width / 2.0;
     let n_y: f64 = (1.0 - v.y.clone()) * height / 2.0;
@@ -92,6 +95,18 @@ fn set_pixel(image: &mut Image, x: f64, y: f64, color: i64){
     image.matrix.insert(((&col * &lin) - 1) as usize, color);
 }
 
+
+// funcao que desenha uma linha conectando os pontos representados pelos vetores v1 e v2,
+// com a cor especificada. A area de desenho compreende o retangulo formado pelos seguintes
+// cantos, independente da dimensao real da imagem em pixels:
+//
+//   (-1,  1): canto superior esquerdo
+//   ( 1,  1): canto superior direito
+//   ( 1, -1): canto inferior direito
+//   (-1, -1): canto inferior esquerdo
+//
+// Logo, espera-se que as coordenadas dos vetores estejam dentro destes limites
+
 fn draw_line(image: &mut Image, v1: &Vector, v2: &Vector, color: i64){
 
     let a: Vector; let b: Vector;
@@ -113,13 +128,15 @@ fn draw_line(image: &mut Image, v1: &Vector, v2: &Vector, color: i64){
         if(p1.x < p2.x){ b = p2.clone() }
         else { b = p1.clone() }
 
+        let start = a.x.clone() as i64;
+        let end = b.x.clone() as i64;
 
+        for i in start..end{
+            x = i.clone() as f64;
+            //if x > b.x.clone() { break }
 
-        while let mut x = a.x.clone(){
-            if x <= b.x { break }
-
-            y = ((x - &a.x) / &deltaX) * (&b.y - &a.y) + &a.y;
-            x = (x + 1.).round();
+            y = ((&x - &a.x) / &deltaX) * (&b.y - &a.y) + &a.y;
+            x = (&x + 1.).round();
 
             //implementar set_pixel
             set_pixel(image, x, y, color.clone());
@@ -134,11 +151,15 @@ fn draw_line(image: &mut Image, v1: &Vector, v2: &Vector, color: i64){
         if(p1.y < p2.y){ b = p2.clone() }
         else { b = p1.clone() }
 
-        while let mut y = a.y.clone(){
-            if y <= b.y { break }
+        let start = a.x.clone() as i64;
+        let end = b.x.clone() as i64;
 
-            x = ((y - &a.y) / &deltaY) * (&b.x - &a.x) + &a.x;
-            y = (y + 1.).round();
+        for j in start..end{
+            y = j.clone() as f64;
+            //if y <= b.y { break }
+
+            x = ((&y - &a.y) / &deltaY) * (&b.x - &a.x) + &a.x;
+            y = (&y + 1.).round();
 
             //implementar set_pixel
             set_pixel(image, x, y, color.clone());
@@ -269,7 +290,12 @@ fn det3x3(mat: &Matrix) -> f64{
 fn main() {
     println!("Hello, world!");
 
-    let mut image: Image = create_image(64, 64, 255);
+    let mut image: Image = create_image(16, 16, 255);
+
+    let vetor1: Vector = create_vector(-1., -1.);
+    let vetor2: Vector = create_vector(0.4, 0.33);
+
+    draw_line(&mut image, &vetor1, &vetor2, 0);
 
     let mut matrix: Matrix = create_matrix(4, 4);
 
