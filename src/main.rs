@@ -284,6 +284,31 @@ fn det3x3(mat: &Matrix) -> f64{
     return 0.;
 }
 
+fn invert3x3(mat: &Matrix) -> Option<Matrix>{
+
+    let det = det3x3(mat);
+
+    let mut inverse: Matrix = create_matrix(3, 3);
+
+    if ZERO!(det, f64) {
+        println!("Singular Matrix");
+        return None;
+    }
+
+    for i in 0..(&inverse.lin -1) {
+        for j in 0..(&inverse.col -1) {
+
+            inverse.m.push(cofactor3x3(mat, i, j) / &det)
+        }
+
+    }
+
+
+
+
+    return Some(inverse);
+}
+
 
 
 
