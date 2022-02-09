@@ -29,6 +29,13 @@ macro_rules! TERNARY{
     }
 }
 
+macro_rules! SCANF{
+    ($string:expr, $sep:expr, $($x:ty),+ ) => {{
+        let mut iter = $string.split($sep);
+        ($(iter.next().and_then(|word| word.parse::<$x>().ok()), )*)
+    }}
+}
+
 #[derive(Copy, Clone)]
 struct Vector {
     x: f64,
@@ -390,14 +397,22 @@ fn fn_main(argv: [&'static str; 3]) -> i64 {
     output_file_name = &argv[2];
 
     // abertura do arquivo de entrada, e leitura dos parametros fixos (parametros da imagem e do observador, quantidade de shapes):
-
+    let mut file_string = String::new();
     let path: &Path = Path::new(input_file_name);
     let feedback = path.display();
 
-    let file = match File::open(&path) {
+    let mut file = match File::open(&path) {
         Err(why) => panic!("Não foi possivel abrir o arquivo {}", feedback),
         Ok(file) => file,
     };
+
+    match file.read_to_string(&mut file_string) {
+        Err(why) => panic!("Não foi possivel ler o arquivo {}", feedback),
+        Ok(_) => println!("Arquivo lido com sucesso!"),
+    };
+
+    //SCANF!("teste de entrada", char::is_whitespace, String, String, String);
+
 
 
 
@@ -406,6 +421,7 @@ fn fn_main(argv: [&'static str; 3]) -> i64 {
 
 fn main() {
     println!("Hello, world!");
+    //let result = SCANF!("teste de entrada", char::is_whitespace, String, String, String);
 
     let mut image: Image = create_image(16, 16, 255);
 
@@ -415,6 +431,8 @@ fn main() {
     draw_line(&mut image, &vetor1, &vetor2, 0);
 
     let mut matrix: Matrix = create_matrix(4, 4);
+
+    return;
 
 
 }
