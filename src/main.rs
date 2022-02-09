@@ -1,3 +1,7 @@
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
+
 const MAX_VERTICES: i64 = 100;
 const MAX_VALUE: i64 = 255;
 
@@ -303,14 +307,102 @@ fn invert3x3(mat: &Matrix) -> Option<Matrix>{
 
     }
 
-
-
-
     return Some(inverse);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                                //
+// Funcoes relacionadas ao tipo Matrix que precisam ser implementadas para o programa funcionar da forma esperada //
+//                                                                                                                //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+////////////////////////////////////////////////////////////////////////////
+//                                                                        //
+// Programa principal. Le um arquivo de entrada com a seguinte estrutura: //
+//                                                                        //
+//	IMAGE_WIDTH IMAGE_HEIGHT BG_COLOR                                 //
+//	OBSERVER_X, OBSERVER_Y, DIRECTION_X, DIRECTION_Y                  //
+//	N_SHAPES                                                          //
+//	N_VERTICES_SHAPE0 X_0 Y_0 X_1 Y_1 ... X_(N-1) Y_(N-1)             //
+//	N_VERTICES_SHAPE1 X_0 Y_0 X_1 Y_1 ... X_(N-1) Y_(N-1)             //
+//	N_VERTICES_SHAPE2 X_0 Y_0 X_1 Y_1 ... X_(N-1) Y_(N-1)             //
+//	...                                                               //
+//	<DRAW_COMMAND_0>                                                  //
+//	<DRAW_COMMAND_1>                                                  //
+//	<DRAW_COMMAND_2>                                                  //
+//	...                                                               //
+//	END                                                               //
+//                                                                        //
+// Sendo que cada linha referente a um comando de desenho pode ser:       //
+//                                                                        //
+//	DRAW_SHAPE SHAPE_ID COLOR ROTATION SCALE T_X T_Y                  //
+//                                                                        //
+// OU                                                                     //
+//                                                                        //
+//	DRAW_SHAPE_BASE SHAPE_ID COLOR E1_X E1_Y E2_X E2_Y T_X T_Y        //
+//                                                                        //
+// E gera uma imagem a partir das configurações e comandos especificados. //
+//                                                                        //
+////////////////////////////////////////////////////////////////////////////
+
+fn fn_main(argv: [&'static str; 3]) -> i64 {
+
+    ////////////////
+    //            //
+    // Variaveis: //
+    //            //
+    ////////////////
+
+    let command: &'static str;
+    let input_file_name: &'static str;
+    let output_file_name: &'static str;
+
+    let width: i64;     // largura da imagem a ser gerada
+    let height: i64;    // altura da imagem a ser gerada
+    let background_color: i64;      // cor de fundo da imagem a ser gerada
+
+    let n_shapes: i64;
+
+    let observer: Vector;
+    let direction: Vector;
+    let mut v: Vector;
+
+    let mut shapes: Vec<Vector> = Vec::new();
+
+    //let mut path: Path;
+
+    let mut img: Image;
+
+    ///////////////////////////////////////////
+    //                                       //
+    // Programa principal propriamente dito: //
+    //                                       //
+    ///////////////////////////////////////////
+
+   /* if (!assert_eq!(argv.len(), 3)) {
+        println!("uso: % <input_file_name> <output_file_name>");
+        return 1;
+    }*/
+
+    input_file_name = &argv[1];
+    output_file_name = &argv[2];
+
+    // abertura do arquivo de entrada, e leitura dos parametros fixos (parametros da imagem e do observador, quantidade de shapes):
+
+    let path: &Path = Path::new(input_file_name);
+    let feedback = path.display();
+
+    let file = match File::open(&path) {
+        Err(why) => panic!("Não foi possivel abrir o arquivo {}", feedback),
+        Ok(file) => file,
+    };
+
+
+
+    return 0;
+}
 
 fn main() {
     println!("Hello, world!");
