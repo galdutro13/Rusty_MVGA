@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+#[macro_use] extern crate scan_fmt;
 
 const MAX_VERTICES: i64 = 100;
 const MAX_VALUE: i64 = 255;
@@ -29,12 +30,12 @@ macro_rules! TERNARY{
     }
 }
 
-macro_rules! SCANF{
+/*macro_rules! SCANF{
     ($string:expr, $sep:expr, $($x:ty),+ ) => {{
         let mut iter = $string.split($sep);
         ($(iter.next().and_then(|word| word.parse::<$x>().ok()), )*)
     }}
-}
+}*/
 
 #[derive(Copy, Clone)]
 struct Vector {
@@ -366,9 +367,9 @@ fn fn_main(argv: [&'static str; 3]) -> i64 {
     let input_file_name: &'static str;
     let output_file_name: &'static str;
 
-    let width: i64;     // largura da imagem a ser gerada
+   /* let width: i64;     // largura da imagem a ser gerada
     let height: i64;    // altura da imagem a ser gerada
-    let background_color: i64;      // cor de fundo da imagem a ser gerada
+    let background_color: i64;      // cor de fundo da imagem a ser gerada*/
 
     let n_shapes: i64;
 
@@ -378,9 +379,12 @@ fn fn_main(argv: [&'static str; 3]) -> i64 {
 
     let mut shapes: Vec<Vector> = Vec::new();
 
-    //let mut path: Path;
-
     let mut img: Image;
+
+    // String que utilizaremos como variavel temporaria
+    let mut temp: String;
+    // offcet para acharmos o primeiro \n
+    let mut offset: usize;
 
     ///////////////////////////////////////////
     //                                       //
@@ -411,9 +415,11 @@ fn fn_main(argv: [&'static str; 3]) -> i64 {
         Ok(_) => println!("Arquivo lido com sucesso!"),
     };
 
-    //SCANF!("teste de entrada", char::is_whitespace, String, String, String);
-
-
+    // para fazer a leitura da string, utilizaremos a função drain para recuperar
+    // parte da funcionalidade de fscanf() em C
+    offset = file_string.find("\n").unwrap_or(file_string.len());
+    temp = file_string.drain(..offset).collect();
+    let (width, height, background_color) = scan_fmt_some!(&temp, "{d} {d} {d}", i64, i64, i64);
 
 
     return 0;
@@ -422,6 +428,9 @@ fn fn_main(argv: [&'static str; 3]) -> i64 {
 fn main() {
     println!("Hello, world!");
     //let result = SCANF!("teste de entrada", char::is_whitespace, String, String, String);
+
+
+
 
     let mut image: Image = create_image(16, 16, 255);
 
